@@ -1,0 +1,34 @@
+{
+	"name": "ourmetrics/php-sdk",
+	"description": "....",
+	"keywords": [
+	],
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Lasse Rafn",
+			"email": "lasserafn@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=7.3"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^7.0",
+		"php-coveralls/php-coveralls": "^1.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"OurMetrics\\SDK\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"OurMetrics\\SDK\\Tests\\": "tests/"
+		}
+	},
+	"config": {
+		"sort-packages": true
+	}
+}
