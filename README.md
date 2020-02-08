@@ -13,7 +13,7 @@
 
 ## Installation
 
-You just require using composer and you're good to go! 
+Add using composer and you're good to go! 
 
 ```bash
 composer require ourmetrics/php-sdk
