@@ -1,6 +1,5 @@
 <?php namespace OurMetrics\SDK;
 
-use OurMetrics\SDK\Concerns\FormatsMetrics;
 use OurMetrics\SDK\Exceptions\CannotQueueMetricsException;
 use OurMetrics\SDK\Exceptions\ProjectKeyMissingException;
 use OurMetrics\SDK\Models\Metric;
