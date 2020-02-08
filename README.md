@@ -1,6 +1,6 @@
 <p align="center" style="text-align: center">
-<img src="logo.png" alt="OurMetrics SDK logo" height="100" />
-<br/>Some description
+<img src="logo.png" alt="OurMetrics logo" height="100" />
+<br/>PHP SDK for OurMetrics API to log metrics.
 </p>
     
 <p align="center" style="text-align: center"> 
