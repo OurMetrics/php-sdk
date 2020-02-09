@@ -1,7 +1,5 @@
 <?php namespace OurMetrics\SDK\Models;
 
-use OurMetrics\SDK\Exceptions\InvalidUnitException;
-use Rackbeat\CloudWatch\Components\MetricDimensionList;
 
 class Metric
 {
@@ -17,7 +15,7 @@ class Metric
 	/** @var string */
 	public $unit;
 
-	/** @var null|MetricDimensionList */
+	/** @var null|DimensionList */
 	public $dimensions;
 
 	/** @var int */
@@ -30,22 +28,15 @@ class Metric
 	 * @param null|\DateTime|\Carbon\Carbon $timestamp
 	 * @param array|null|DimensionList      $dimensions
 	 * @param int                           $resolution
-	 *
-	 * @throws \OurMetrics\SDK\Exceptions\InvalidUnitException
-	 * @throws \OurMetrics\SDK\Exceptions\InvalidDimensionKeyException
 	 */
 	public function __construct( $name, $value, $unit = Unit::NONE, $dimensions = [], $timestamp = null, $resolution = 60 ) {
 		if ( ! $dimensions instanceof DimensionList ) {
 			$dimensions = new DimensionList( $dimensions ?? [] );
 		}
 
-		if ( ! Unit::validate( $unit ) ) {
-			throw new InvalidUnitException( "The selected '{$unit}' is not valid. Check documentation for a list of valid units." );
-		}
-
 		$this->name       = (string) $name;
 		$this->value      = (double) $value;
-		$this->unit       =  $unit ?? Unit::NONE;
+		$this->unit       = $unit ?? Unit::NONE;
 		$this->dimensions = $dimensions;
 		$this->timestamp  = $this->formatTimestamp( $timestamp );
 		$this->resolution = (int) $resolution;

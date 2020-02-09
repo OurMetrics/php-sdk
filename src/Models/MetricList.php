@@ -13,7 +13,7 @@ class MetricList
 	public function __construct( $metrics = [] ) {
 		foreach ( $metrics as $name => $value ) {
 			if ( ! $value instanceof Metric ) {
-				continue;
+				$value = new Metric($name, $value);
 			}
 
 			$this->add( $value );

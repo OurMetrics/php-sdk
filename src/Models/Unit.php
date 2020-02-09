@@ -6,8 +6,6 @@
  * 'unit' => OurMetrics\SDK\Models\Unit::SECONDS
  */
 
-use OurMetrics\SDK\Exceptions\InvalidUnitException;
-
 class Unit
 {
 	// Misc.
@@ -45,9 +43,4 @@ class Unit
 	public const MEGABYTES_SECOND = 'megabytes/second';
 	public const KILOBYTES_SECOND = 'kilobytes/second';
 	public const BYTES_SECOND     = 'bytes/second';
-
-	public static function validate( $unit = Unit::NONE ) {
-		// todo
-		return true;
-	}
 }

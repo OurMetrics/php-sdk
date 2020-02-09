@@ -1,7 +1,5 @@
 <?php namespace OurMetrics\SDK\Models;
 
-use OurMetrics\SDK\Exceptions\InvalidDimensionKeyException;
-
 class DimensionList
 {
 	/** @var Dimension[] */
@@ -11,8 +9,6 @@ class DimensionList
 	 * Supports a key-value array or array of Dimension
 	 *
 	 * @param array|Dimension[] $dimensions
-	 *
-	 * @throws InvalidDimensionKeyException
 	 */
 	public function __construct( $dimensions = [] ) {
 		foreach ( $dimensions as $name => $value ) {
