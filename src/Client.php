@@ -68,13 +68,13 @@ class Client
 
 	public function dispatchQueued() {
 		foreach ( array_chunk( $this->queued->all(), 10, false ) as $metrics ) {
-			$this->push( new MetricList( $metrics ) );
+			$this->dispatch( new MetricList( $metrics ) );
 		}
 
 		$this->queued->clear();
 	}
 
-	public function push( MetricList $metricList ) {
+	public function dispatch( MetricList $metricList ) {
 		$postData = http_build_query( [ 'metrics' => $metricList->toArray() ] );
 
 		$endpointParts         = parse_url( $this->getConfig( 'endpoint' ) );
