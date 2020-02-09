@@ -6,20 +6,17 @@ class MetricList
 	protected $metrics = [];
 
 	/**
-	 * Supports a key-value array or array of Metric
+	 * Supports an array of Metric
 	 *
-	 * @param array|Metric[]
-	 *
-	 * @throws \OurMetrics\SDK\Exceptions\InvalidUnitException
+	 * @param Metric[]
 	 */
 	public function __construct( $metrics = [] ) {
 		foreach ( $metrics as $name => $value ) {
-			if ( $value instanceof Metric ) {
-				$this->add( $value );
+			if ( ! $value instanceof Metric ) {
 				continue;
 			}
 
-			$this->add( new Metric( $name, $value ) );
+			$this->add( $value );
 		}
 	}
 

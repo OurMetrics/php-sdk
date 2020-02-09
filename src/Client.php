@@ -1,6 +1,8 @@
 <?php namespace OurMetrics\SDK;
 
 use OurMetrics\SDK\Exceptions\CannotQueueMetricsException;
+use OurMetrics\SDK\Exceptions\InvalidDimensionKeyException;
+use OurMetrics\SDK\Exceptions\InvalidUnitException;
 use OurMetrics\SDK\Exceptions\ProjectKeyMissingException;
 use OurMetrics\SDK\Models\Metric;
 use OurMetrics\SDK\Models\MetricList;
@@ -42,20 +44,9 @@ class Client
 
 	/**
 	 * @param Metric[]|Metric|MetricList $metrics
-	 *
-	 * @throws \OurMetrics\SDK\Exceptions\InvalidUnitException
-	 * @throws \OurMetrics\SDK\Exceptions\CannotQueueMetricsException
 	 */
 	public function queue( $metrics ) {
-		if ( is_array( $metrics ) ) {
-			$this->queued->addList( new MetricList( $metrics ) );
-		} elseif ( $metrics instanceof Metric ) {
-			$this->queued->add( $metrics );
-		} elseif ( $metrics instanceof MetricList ) {
-			$this->queued->addList( $metrics );
-		} else {
-			throw new CannotQueueMetricsException( 'The passed metrics are not a valid format. Must be either an array of Metric, a single Metric or a MetricList.' );
-		}
+		$this->queued->addList( $this->getMetricListFromAssortedMetrics( $metrics ) );
 	}
 
 	public function __destruct() {
@@ -72,25 +63,28 @@ class Client
 
 	public function dispatchQueued() {
 		foreach ( array_chunk( $this->queued->all(), 10, false ) as $metrics ) {
-			$this->dispatch( new MetricList( $metrics ) );
+			$this->dispatch( $metrics );
 		}
 
 		$this->queued->clear();
 	}
 
-	public function dispatch( MetricList $metricList ) {
+	/**
+	 * @param Metric[]|Metric|MetricList $metrics
+	 */
+	public function dispatch( $metrics ) {
 		if ( ! $this->canDispatch() ) {
 			return;
 		}
 
-		$postData = http_build_query( [ 'metrics' => $metricList->toArray() ] );
+		$postData = http_build_query( [ 'metrics' => $this->getMetricListFromAssortedMetrics( $metrics )->toArray() ] );
 
 		$endpointParts         = parse_url( $this->getConfig( 'endpoint' ) );
 		$endpointParts['path'] = $endpointParts['path'] ?? '/';
 		$endpointParts['port'] = $endpointParts['scheme'] === 'https' ? 443 : 80;
 
 		$payload = [
-			"POST {$endpointParts['path']} HTTP/1.1",
+			"POST {$endpointParts['path']} HTTP/2",
 			'Host: ' . $endpointParts['host'],
 			'User-Agent: ' . $this->getConfig( 'headers.user_agent', 'OurMetrics SDK' ),
 			'Project-Key: ' . $this->projectKey,
@@ -120,7 +114,28 @@ class Client
 		return $value;
 	}
 
-	protected function canDispatch() {
+	protected function canDispatch(): bool {
 		return ! empty( $this->projectKey );
+	}
+
+	/**
+	 * @param Metric[]|Metric|MetricList $metrics
+	 *
+	 * @return MetricList
+	 */
+	protected function getMetricListFromAssortedMetrics( $metrics ): MetricList {
+		if ( $metrics instanceof MetricList ) {
+			return $metrics;
+		}
+
+		if ( is_array( $metrics ) ) {
+			return new MetricList( $metrics );
+		}
+
+		if ( $metrics instanceof Metric ) {
+			return new MetricList( [ $metrics ] );
+		}
+
+		return new MetricList( [] );
 	}
 }

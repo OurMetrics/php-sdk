@@ -32,6 +32,7 @@ class Metric
 	 * @param int                           $resolution
 	 *
 	 * @throws \OurMetrics\SDK\Exceptions\InvalidUnitException
+	 * @throws \OurMetrics\SDK\Exceptions\InvalidDimensionKeyException
 	 */
 	public function __construct( $name, $value, $unit = Unit::NONE, $dimensions = [], $timestamp = null, $resolution = 60 ) {
 		if ( ! $dimensions instanceof DimensionList ) {
@@ -44,7 +45,7 @@ class Metric
 
 		$this->name       = (string) $name;
 		$this->value      = (double) $value;
-		$this->unit       = (string) ( $unit ?? Unit::NONE );
+		$this->unit       =  $unit ?? Unit::NONE;
 		$this->dimensions = $dimensions;
 		$this->timestamp  = $this->formatTimestamp( $timestamp );
 		$this->resolution = (int) $resolution;
