@@ -11,15 +11,19 @@ class Client
 
 	protected $config = [];
 
+	protected $silenced = false;
+
 	/** @var MetricList */
 	protected $queued;
 
-	public function __construct( $projectKey, $config = [] ) {
-		$this->projectKey = $projectKey;
-
-		if ( empty( $projectKey ) ) {
+	public function __construct( $projectKey, $config = [], $silence = false ) {
+		if ( ! $silence && empty( $projectKey ) ) {
 			throw new ProjectKeyMissingException( "The project key '{$projectKey}' is invalid." );
 		}
+
+		$this->projectKey = $projectKey;
+
+		$this->silenced = $silence;
 
 		$this->config = array_merge( [
 			'endpoint'             => 'https://api.ourmetrics.com/metrics',
@@ -75,6 +79,10 @@ class Client
 	}
 
 	public function dispatch( MetricList $metricList ) {
+		if ( ! $this->canDispatch() ) {
+			return;
+		}
+
 		$postData = http_build_query( [ 'metrics' => $metricList->toArray() ] );
 
 		$endpointParts         = parse_url( $this->getConfig( 'endpoint' ) );
@@ -101,7 +109,6 @@ class Client
 		fclose( $socket );
 	}
 
-	// todo test
 	protected function getConfig( $key, $default = null ) {
 		$key   = explode( '.', \mb_strtolower( $key ) );
 		$value = $this->config;
@@ -111,5 +118,9 @@ class Client
 		}
 
 		return $value;
+	}
+
+	protected function canDispatch() {
+		return ! empty( $this->projectKey );
 	}
 }
