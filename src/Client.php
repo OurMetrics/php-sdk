@@ -81,7 +81,7 @@ class Client
 		$endpointParts['port'] = $endpointParts['scheme'] === 'https' ? 443 : 80;
 
 		$payload = [
-			"POST {$endpointParts['path']} HTTP/2",
+			"POST {$endpointParts['path']} HTTP/1.1",
 			'Host: ' . $endpointParts['host'],
 			'User-Agent: ' . $this->getConfig( 'headers.user_agent', 'OurMetrics SDK' ),
 			'Project-Key: ' . $this->projectKey,
