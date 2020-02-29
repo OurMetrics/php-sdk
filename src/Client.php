@@ -100,6 +100,10 @@ class Client
 		fclose( $socket );
 	}
 
+	public function isSilenced(): bool {
+		return $this->silenced;
+	}
+
 	protected function getConfig( $key, $default = null ) {
 		$key   = explode( '.', \mb_strtolower( $key ) );
 		$value = $this->config;
