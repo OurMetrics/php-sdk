@@ -46,6 +46,16 @@ class Client
 		$this->queued->addList( $this->getMetricListFromAssortedMetrics( $metrics ) );
 	}
 
+	/**
+	 * Useful for tracking events ("button clicked" etc.)
+	 *
+	 * @param string           $event
+	 * @param int|double|float $value
+	 */
+	public function track( string $event, $value = 1.0 ) {
+		$this->queued->add( new Metric( $event, $value ) );
+	}
+
 	public function __destruct() {
 		if ( $this->getConfig( 'dispatch_on_destruct', true ) ) {
 			$this->dispatchQueued();
@@ -63,6 +73,13 @@ class Client
 			$this->dispatch( $metrics );
 		}
 
+		$this->clearQueue();
+	}
+
+	/**
+	 * Will un-queue all pending metrics.
+	 */
+	public function clearQueue() {
 		$this->queued->clear();
 	}
 

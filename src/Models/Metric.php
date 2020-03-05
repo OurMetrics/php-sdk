@@ -18,18 +18,14 @@ class Metric
 	/** @var null|DimensionList */
 	public $dimensions;
 
-	/** @var int */
-	public $resolution = 60; // 1-60
-
 	/**
 	 * @param string                        $name
 	 * @param int|float|double              $value
 	 * @param string                        $unit
 	 * @param null|\DateTime|\Carbon\Carbon $timestamp
 	 * @param array|null|DimensionList      $dimensions
-	 * @param int                           $resolution
 	 */
-	public function __construct( $name, $value, $unit = Unit::NONE, $dimensions = [], $timestamp = null, $resolution = 60 ) {
+	public function __construct( $name, $value, $unit = Unit::NONE, $dimensions = [], $timestamp = null ) {
 		if ( ! $dimensions instanceof DimensionList ) {
 			$dimensions = new DimensionList( $dimensions ?? [] );
 		}
@@ -39,7 +35,6 @@ class Metric
 		$this->unit       = $unit ?? Unit::NONE;
 		$this->dimensions = $dimensions;
 		$this->timestamp  = $this->formatTimestamp( $timestamp );
-		$this->resolution = (int) $resolution;
 	}
 
 	public function toArray(): array {
@@ -48,7 +43,6 @@ class Metric
 			'unit'       => $this->unit,
 			'value'      => $this->value,
 			'timestamp'  => $this->timestamp,
-			'resolution' => $this->resolution,
 			'dimensions' => $this->dimensions->toArray(),
 		];
 	}
