@@ -25,7 +25,8 @@ class Metric
 	 * @param null|\DateTime|\Carbon\Carbon $timestamp
 	 * @param array|null|DimensionList      $dimensions
 	 */
-	public function __construct( $name, $value, $unit = Unit::NONE, $dimensions = [], $timestamp = null ) {
+	public function __construct( $name, $value, $unit = Unit::NONE, $dimensions = [], $timestamp = null )
+	{
 		if ( ! $dimensions instanceof DimensionList ) {
 			$dimensions = new DimensionList( $dimensions ?? [] );
 		}
@@ -37,7 +38,8 @@ class Metric
 		$this->timestamp  = $this->formatTimestamp( $timestamp );
 	}
 
-	public function toArray(): array {
+	public function toArray(): array
+	{
 		return [
 			'name'       => $this->name,
 			'unit'       => $this->unit,
@@ -47,7 +49,8 @@ class Metric
 		];
 	}
 
-	protected function formatTimestamp( $timestamp = null ): string {
+	protected function formatTimestamp( $timestamp = null ): int
+	{
 		if ( $timestamp === null || empty( $timestamp ) ) {
 			$timestamp = new \DateTime();
 		}
@@ -56,6 +59,6 @@ class Metric
 			$timestamp = new \DateTime( $timestamp );
 		}
 
-		return $timestamp->format( 'U' ) * 100000000000;
+		return (int) ( $timestamp->format( 'U' ) * 1000000000 );
 	}
 }
