@@ -91,11 +91,11 @@ class Client
 			return;
 		}
 
-		$postData = http_build_query( [ 'metrics' => $this->getMetricListFromAssortedMetrics( $metrics )->toArray() ] );
+		$postData = json_encode( [ 'metrics' => $this->getMetricListFromAssortedMetrics( $metrics )->toArray() ] );
 
 		$endpointParts         = parse_url( $this->getConfig( 'endpoint' ) );
 		$endpointParts['path'] = $endpointParts['path'] ?? '/';
-		$endpointParts['port'] = $endpointParts['scheme'] === 'https' ? 443 : 80;
+		$endpointParts['port'] = $endpointParts['port'] ?? ($endpointParts['scheme'] === 'https' ? 443 : 80);
 
 		$payload = [
 			"POST {$endpointParts['path']} HTTP/1.1",
@@ -104,7 +104,7 @@ class Client
 			'Project-Key: ' . $this->projectKey,
 			'Content-Length: ' . \mb_strlen( $postData ),
 			'Connection: ' . $this->getConfig( 'headers.connection', 'close' ),
-			'Content-Type: application/x-www-form-urlencoded',
+			'Content-Type: application/json',
 		];
 
 		$payload = implode( "\r\n", $payload ) . "\r\n\r\n";

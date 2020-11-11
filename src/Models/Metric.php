@@ -56,6 +56,6 @@ class Metric
 			$timestamp = new \DateTime( $timestamp );
 		}
 
-		return $timestamp->format( 'Y-m-d\TH:i:sP' );
+		return $timestamp->format( 'U' ) * 100000000000;
 	}
 }
