@@ -43,4 +43,18 @@ class Unit
 	public const MEGABYTES_SECOND = 'megabytes/second';
 	public const KILOBYTES_SECOND = 'kilobytes/second';
 	public const BYTES_SECOND     = 'bytes/second';
+
+	// Monetary values
+	public const MONEY_USD = 'money:usd';
+	public const MONEY_GBP = 'money:gbp';
+	public const MONEY_DKK = 'money:dkk';
+	public const MONEY_SEK = 'money:sek';
+	public const MONEY_NOK = 'money:nok';
+	public const MONEY_EUR = 'money:eur';
+	public const MONEY_CNY = 'money:cny';
+	public const MONEY_JPY = 'money:jpy';
+	public const MONEY_AUD = 'money:aud';
+	public const MONEY_CAD = 'money:cad';
+	public const MONEY_CHF = 'money:chf';
+	public const MONEY_NZD = 'money:nzd';
 }
