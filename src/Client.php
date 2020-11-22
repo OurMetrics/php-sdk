@@ -66,14 +66,18 @@ class Client
 	 * @param string     $unit
 	 * @param callable   $callback
 	 * @param array|null $dimensions
+	 *
+	 * @return mixed
 	 */
-	public function time( string $event, string $unit, callable $callback, ?array $dimensions = [] ): void
+	public function time( string $event, string $unit, callable $callback, ?array $dimensions = [] )
 	{
 		$start = microtime( true );
 
-		$callback();
+		$result = $callback();
 
 		$this->queued->add( new Metric( $event, microtime( true ) - $start, $unit, $dimensions ) );
+
+		return $result;
 	}
 
 	public function __destruct()
