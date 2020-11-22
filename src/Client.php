@@ -15,7 +15,8 @@ class Client
 	/** @var MetricList */
 	protected $queued;
 
-	public function __construct( $projectKey, $config = [], $silence = false ) {
+	public function __construct( $projectKey, $config = [], $silence = false )
+	{
 		if ( ! $silence && empty( $projectKey ) ) {
 			throw new ProjectKeyMissingException( "The project key '{$projectKey}' is invalid." );
 		}
@@ -42,7 +43,8 @@ class Client
 	/**
 	 * @param Metric[]|Metric|MetricList $metrics
 	 */
-	public function queue( $metrics ) {
+	public function queue( $metrics )
+	{
 		$this->queued->addList( $this->getMetricListFromAssortedMetrics( $metrics ) );
 	}
 
@@ -52,23 +54,44 @@ class Client
 	 * @param string           $event
 	 * @param int|double|float $value
 	 */
-	public function track( string $event, $value = 1.0 ) {
+	public function track( string $event, $value = 1.0 ): void
+	{
 		$this->queued->add( new Metric( $event, $value ) );
 	}
 
-	public function __destruct() {
+	/**
+	 * Useful for timing events (how long till callback finished?)
+	 *
+	 * @param string     $event
+	 * @param string     $unit
+	 * @param callable   $callback
+	 * @param array|null $dimensions
+	 */
+	public function time( string $event, string $unit, callable $callback, ?array $dimensions = [] ): void
+	{
+		$start = microtime( true );
+
+		$callback();
+
+		$this->queued->add( new Metric( $event, microtime( true ) - $start, $unit, $dimensions ) );
+	}
+
+	public function __destruct()
+	{
 		if ( $this->getConfig( 'dispatch_on_destruct', true ) ) {
 			$this->dispatchQueued();
 		}
 	}
 
-	public function registerShutdownFunction() {
+	public function registerShutdownFunction()
+	{
 		register_shutdown_function( function () {
 			$this->dispatchQueued();
 		} );
 	}
 
-	public function dispatchQueued() {
+	public function dispatchQueued()
+	{
 		foreach ( array_chunk( $this->queued->all(), 10, false ) as $metrics ) {
 			$this->dispatch( $metrics );
 		}
@@ -79,14 +102,16 @@ class Client
 	/**
 	 * Will un-queue all pending metrics.
 	 */
-	public function clearQueue() {
+	public function clearQueue()
+	{
 		$this->queued->clear();
 	}
 
 	/**
 	 * @param Metric[]|Metric|MetricList $metrics
 	 */
-	public function dispatch( $metrics ) {
+	public function dispatch( $metrics )
+	{
 		if ( ! $this->canDispatch() ) {
 			return;
 		}
@@ -95,7 +120,7 @@ class Client
 
 		$endpointParts         = parse_url( $this->getConfig( 'endpoint' ) );
 		$endpointParts['path'] = $endpointParts['path'] ?? '/';
-		$endpointParts['port'] = $endpointParts['port'] ?? ($endpointParts['scheme'] === 'https' ? 443 : 80);
+		$endpointParts['port'] = $endpointParts['port'] ?? ( $endpointParts['scheme'] === 'https' ? 443 : 80 );
 
 		$payload = [
 			"POST {$endpointParts['path']} HTTP/1.1",
@@ -117,11 +142,13 @@ class Client
 		fclose( $socket );
 	}
 
-	public function isSilenced(): bool {
+	public function isSilenced(): bool
+	{
 		return $this->silenced;
 	}
 
-	protected function getConfig( $key, $default = null ) {
+	protected function getConfig( $key, $default = null )
+	{
 		$key   = explode( '.', \mb_strtolower( $key ) );
 		$value = $this->config;
 
@@ -132,7 +159,8 @@ class Client
 		return $value;
 	}
 
-	protected function canDispatch(): bool {
+	protected function canDispatch(): bool
+	{
 		return ! empty( $this->projectKey );
 	}
 
@@ -141,7 +169,8 @@ class Client
 	 *
 	 * @return MetricList
 	 */
-	protected function getMetricListFromAssortedMetrics( $metrics ): MetricList {
+	protected function getMetricListFromAssortedMetrics( $metrics ): MetricList
+	{
 		if ( $metrics instanceof MetricList ) {
 			return $metrics;
 		}
