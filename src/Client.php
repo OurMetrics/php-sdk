@@ -123,7 +123,7 @@ class Client
 			return;
 		}
 
-		$postData = json_encode( [ 'metrics' => $this->getMetricListFromAssortedMetrics( $metrics )->toArray() ] );
+		$postData = json_encode( [ 'metrics' => $this->getMetricListFromAssortedMetrics( $metrics )->toArray() ], JSON_THROW_ON_ERROR );
 
 		$endpointParts         = parse_url( $this->getConfig( 'endpoint' ) );
 		$endpointParts['path'] = $endpointParts['path'] ?? '/';
