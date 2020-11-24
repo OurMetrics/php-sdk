@@ -1,5 +1,6 @@
 <?php namespace OurMetrics\SDK;
 
+use OurMetrics\SDK\Exceptions\DispatchException;
 use OurMetrics\SDK\Exceptions\ProjectKeyMissingException;
 use OurMetrics\SDK\Models\Metric;
 use OurMetrics\SDK\Models\MetricList;
@@ -113,6 +114,8 @@ class Client
 
 	/**
 	 * @param Metric[]|Metric|MetricList $metrics
+	 *
+	 * @throws DispatchException
 	 */
 	public function dispatch( $metrics )
 	{
@@ -141,9 +144,15 @@ class Client
 
 		$prefix = $endpointParts['scheme'] === 'https' ? 'tls://' : '';
 
-		$socket = fsockopen( $prefix . $endpointParts['host'], $endpointParts['port'], $errno, $errst, 2.0 );
-		fwrite( $socket, $payload );
-		fclose( $socket );
+		try {
+			$socket = fsockopen( $prefix . $endpointParts['host'], $endpointParts['port'], $errno, $errst, 2.0 );
+			fwrite( $socket, $payload );
+			fclose( $socket );
+		} catch ( \Exception $exception ) {
+			if ( ! $this->isSilenced() ) {
+				throw new DispatchException( 'Dispatching metrics failed: ' . $exception->getMessage(), $exception->getCode(), $exception );
+			}
+		}
 	}
 
 	public function isSilenced(): bool
