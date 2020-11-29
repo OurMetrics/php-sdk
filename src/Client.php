@@ -18,13 +18,13 @@ class Client
 
 	public function __construct( $projectKey, $config = [], $silence = false )
 	{
-		if ( ! $silence && empty( $projectKey ) ) {
+		$this->silenced = filter_var( $silence, FILTER_VALIDATE_BOOLEAN );
+
+		if ( ! $this->silenced && empty( $projectKey ) ) {
 			throw new ProjectKeyMissingException( "The project key '{$projectKey}' is invalid." );
 		}
 
 		$this->projectKey = $projectKey;
-
-		$this->silenced = $silence;
 
 		$this->config = array_merge( [
 			'endpoint'             => 'https://api.ourmetrics.com/metrics',
