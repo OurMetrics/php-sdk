@@ -49,7 +49,7 @@ class Metric
 		];
 	}
 
-	protected function formatTimestamp( $timestamp = null ): int
+	protected function formatTimestamp( $timestamp = null ): string
 	{
 		if ( $timestamp === null || empty( $timestamp ) ) {
 			$timestamp = new \DateTime();
@@ -59,6 +59,6 @@ class Metric
 			$timestamp = new \DateTime( $timestamp );
 		}
 
-		return (int) ( $timestamp->format( 'U' ) * 1000000000 );
+		return $timestamp->format(\DateTime::ISO8601);
 	}
 }
